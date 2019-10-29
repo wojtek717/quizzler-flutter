@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'QuizBrain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() => runApp(Quizzler());
 
@@ -29,20 +30,48 @@ class _QuizPageState extends State<QuizPage> {
   QuizBrain quizBrain = new QuizBrain();
 
   void CompareAnswers(bool userAnsw) {
-    if (quizBrain.CheckAnswer(userAnsw)) {
-      scoreKeeper.add(Icon(
-        Icons.check,
-        color: Colors.green,
-      ));
-    } else {
-      scoreKeeper.add(Icon(
-        Icons.close,
-        color: Colors.red,
-      ));
-    }
-
     setState(() {
-      quizBrain.NextQuestion();
+      if (quizBrain.CheckAnswer(userAnsw)) {
+        scoreKeeper.add(Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+        quizBrain.AddCorrect();
+      } else {
+        scoreKeeper.add(Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+      }
+
+      if (!quizBrain.NextQuestion()) {
+        Alert(
+          context: context,
+          type: AlertType.error,
+          title: "Finished!",
+          desc: "Result: " +
+              quizBrain.GetCorrectAnsw().toString() +
+              "/" +
+              quizBrain.GetQuestionAmount().toString(),
+          buttons: [
+            DialogButton(
+              child: Text(
+                "RESTART",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: () {
+                setState(() {
+                  quizBrain.Reset();
+                  scoreKeeper.clear();
+                });
+
+                Navigator.pop(context);
+              },
+              width: 120,
+            )
+          ],
+        ).show();
+      }
     });
   }
 
