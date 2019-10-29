@@ -26,19 +26,27 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-
   QuizBrain quizBrain = new QuizBrain();
 
-  List<Icon> scoreKeeper = [
-    Icon(
-      Icons.check,
-      color: Colors.green,
-    ),
-    Icon(
-      Icons.close,
-      color: Colors.red,
-    ),
-  ];
+  void CompareAnswers(bool userAnsw) {
+    if (quizBrain.CheckAnswer(userAnsw)) {
+      scoreKeeper.add(Icon(
+        Icons.check,
+        color: Colors.green,
+      ));
+    } else {
+      scoreKeeper.add(Icon(
+        Icons.close,
+        color: Colors.red,
+      ));
+    }
+
+    setState(() {
+      quizBrain.NextQuestion();
+    });
+  }
+
+  List<Icon> scoreKeeper = [];
 
   @override
   Widget build(BuildContext context) {
@@ -76,15 +84,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                if (quizBrain.CheckAnswer(true)) {
-                  print('poprawna odpowiedz');
-                } else {
-                  print('zla odpowiedz');
-                }
-
-                setState(() {
-                  quizBrain.NextQuestion();
-                });
+                CompareAnswers(true);
               },
             ),
           ),
@@ -102,15 +102,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                if (quizBrain.CheckAnswer(false)) {
-                  print('poprawna odpowiedz');
-                } else {
-                  print('zla odpowiedz');
-                }
-
-                setState(() {
-                  quizBrain.NextQuestion();
-                });
+                CompareAnswers(false);
               },
             ),
           ),
